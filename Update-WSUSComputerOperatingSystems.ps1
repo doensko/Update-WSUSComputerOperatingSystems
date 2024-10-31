@@ -436,4 +436,4 @@ foreach ($OSDescription in $OSDescriptions) {
     }
 }
 
-Invoke-Sqlcmd -ServerInstance $SQLServerInstance -Encrypt $Encrypt -Query $SqlcmdQuery -Verbose 4>&1 | Tee-Object -FilePath "$env:ProgramFiles\Update Services\Update-WSUSOSDescriptions.log"
+Invoke-Sqlcmd -ServerInstance $SQLServerInstance -Encrypt $Encrypt -Query $SqlcmdQuery -Verbose 4>&1 | Tee-Object -FilePath "$env:ProgramFiles\Update Services\Update-WSUSComputerOperatingSystems.log"
