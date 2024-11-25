@@ -10,3 +10,5 @@ This script can be run against a WSUS server to add additional edition and relea
 The script was designed from scratch with publicly available documentation only, and is released to the community in perpetuity under the GNU GENERAL PUBLIC LICENSE 3.0.
 
 Legal notice: This script is provided without any warranty; without even the implied warranty of merchantability or fitness for a particular purpose. In no event shall the author or contributors be liable for any damages arising from its use. This script is provided “as is”.
+
+Updated to work with powershell 6
