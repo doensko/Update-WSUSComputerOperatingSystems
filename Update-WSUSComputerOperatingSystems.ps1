@@ -1,3 +1,11 @@
+
+# Compatibility Notes:
+# - This script has been adapted for PowerShell Core compatibility.
+# - Replaced Invoke-Sqlcmd with System.Data.SqlClient for cross-platform SQL execution.
+# - Ensure the SqlServer module is not required for other operations.
+# - Log paths and other file handling operations are Windows-specific; modify for cross-platform if needed.
+
+
 # Update tbComputerTargetDetail for WSUS to add more details in OSDescription field (based on https://www.wsus.de/windows-editionen-anzeigen/)
 # See also https://server-essentials.com/support/windows-10-vista-wsus-not-updating
 
@@ -436,4 +444,31 @@ foreach ($OSDescription in $OSDescriptions) {
     }
 }
 
-Invoke-Sqlcmd -ServerInstance $SQLServerInstance -Encrypt $Encrypt -Query $SqlcmdQuery -Verbose 4>&1 | Tee-Object -FilePath "$env:ProgramFiles\Update Services\Update-WSUSComputerOperatingSystems.log"
+
+# Convert Encrypt to Boolean (True/False)
+$encryptValue = if ($Encrypt -eq 'True') { 'True' } elseif ($Encrypt -eq 'False') { 'False' } else { 'False' }
+$connectionString = "Server=$SQLServerInstance;Integrated Security=True;Encrypt=$encryptValue;"
+
+# Establish connection and execute SQL query using System.Data.SqlClient
+$connection = New-Object System.Data.SqlClient.SqlConnection
+$connection.ConnectionString = $connectionString
+
+try {
+    $connection.Open()
+    Write-Host "Connection to SQL Server established successfully."
+
+    $command = $connection.CreateCommand()
+    $command.CommandText = $SqlcmdQuery
+
+    try {
+        $command.ExecuteNonQuery() | Out-Null
+        Write-Host "SQL query executed successfully."
+    } catch {
+        Write-Error "Failed to execute SQL query: $_"
+    }
+} catch {
+    Write-Error "Failed to connect to SQL Server: $_"
+} finally {
+    $connection.Close()
+    Write-Host "Connection to SQL Server closed."
+}
